@@ -7,7 +7,11 @@
 ## 장정
 배달비를 절약하고 최소주문 컷을 지킬수 있으며 양이 많은 음식의 경우 N 분의 1로 적절한 양으로 먹을 수 있다.
 ## 아키텍쳐
-형상관리: 깃허브, 노션 / 프론트엔드: BULMA / 서버 벡엔드: Flask, JWT, Python, jinja / DB: MongoDB, 3T / 배포: AWS
+형상관리: 깃허브, 노션
+프론트엔드: BULMA
+서버 벡엔드: Flask, JWT, Python, jinja
+DB: MongoDB, 3T
+배포: AWS
 ## 기술적 챌린지
 [벡엔드] JWT로 로그인 시스템 개발, 웹소켓을 통한 실시간 채팅 개발,  Jinja2 사용해서 서버사이드 구현, 
 MongoDB를 통한 아이디 중복 확인 구현
