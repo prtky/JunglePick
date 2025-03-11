@@ -230,6 +230,7 @@ def handle_message(data):
     socketio.emit('message', data, room=room)
     
     #브런치 확인용 주석추가
+    #확인완료
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
