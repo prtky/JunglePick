@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>배달 친구 찾기</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
+    />
+    <style>
+      .container {
+        width: 90%;
+        margin: auto;
+        padding: 2%;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 2%;
+      }
+      .content-wrapper {
+        display: flex;
+        flex-direction: row;
+        gap: 2%;
+      }
+      .main-content {
+        flex: 3;
+      }
+      .sidebar {
+        flex: 1;
+      }
+      .chat-box {
+        height: 40vh;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        padding: 2%;
+        border-radius: 8px;
+        background: #f9f9f9;
+      }
+      .chat-input {
+        display: flex;
+        margin-top: 2%;
+      }
+      .chat-input input {
+        flex: 1;
+        padding: 2%;
+      }
+      .chat-input button {
+        margin-left: 2%;
+      }
+      .random-menu {
+        margin-top: 2%;
+        padding: 2%;
+        border-radius: 8px;
+        background: #f5f5f5;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+  </head>
+  <body class="has-background-light">
+    <div class="container">
+      <h1 class="title has-text-centered">메인 페이지</h1>
+      <h5 class="subtitle">나의 닉네임은: {{username}}</h5>
+      <div class="has-text-left">
+        <a href="/postcard" class="button is-primary">새 게시글 작성</a>
+      </div>
+      <div class="content-wrapper">
+        <div class="main-content">
+          <div class="columns is-multiline" id="cards-container">
+            <!-- 카드들이 여기에 동적으로 추가될 예정 -->
+            {% for card in cards %}
+            <div class="column is-half">
+              <div class="box">
+                <h3 class="title is-5">{{card.card_title}}</h3>
+                <p>메뉴: {{card.menu_list}}</p>
+                <p>배달비: {{card.delivery_fee}}원</p>
+                <p>마감시간: {{card.end_time}}</p>
+                <div class="buttons">
+                  <button
+                    class="button is-success join-party"
+                    data-room="{{ card._id }}"
+                  >
+                    참여하기
+                  </button>
+                  <button class="button is-warning">주문 상태 변경</button>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="sidebar">
+          <div class="card">
+            <div class="card-content">
+              <p class="title">공지사항</p>
+              <p>공동 주문 참여 시 시간 엄수 부탁드립니다!</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-content">
+              <p class="title">채팅방</p>
+              <div class="chat-box" id="chat-box">
+                <!-- 채팅 메시지가 여기에 추가됨 -->
+                {% for chat in chats %}
+                <div>{{chat.name}} : {{chat.texts}}</div>
+                {% endfor %}
+              </div>
+              <div class="chat-input">
+                <input
+                  type="text"
+                  id="chat-message"
+                  placeholder="메시지를 입력하세요"
+                />
+                <button class="button is-link">전송</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var socket = io.connect(
+        "http://" + document.domain + ":" + location.port
+      );
+      var currentRoom = null;
+
+      // 카드별 채팅방 버튼 클릭 이벤트 추가
+      $(".join-party").click(function () {
+        var room_id = $(this).data("room"); // 카드별 채팅방 ID 가져오기
+
+        if (currentRoom) {
+          socket.emit("leave", { room: currentRoom }); // 기존 채팅방 나가기
+        }
+
+        currentRoom = room_id;
+        socket.emit("join", { room: room_id }); // 새로운 채팅방 입장
+
+        $("#chat-box").html(""); // 채팅방 변경 시 기존 메시지 초기화
+      });
+
+      socket.on("message", function (data) {
+        // 추후 로그인 성공하면 로그인 정보에서 가져오기
+        // var userName = $("#formUser").val();
+        if (data.room === currentRoom) {
+          var contentSpan = $("#chat-box");
+          var content = $("<div></div>").text(data.message);
+          contentSpan.append(content);
+        }
+      });
+
+      $("#messageForm").submit(function (event) {
+        event.preventDefault();
+
+        var userMessage = $("#chat-message").val();
+
+        if (userMessage && currentRoom) {
+          socket.emit("message", { message: userMessage, room: currentRoom });
+          $("#chat-message").val(""); // 입력란 초기화
+        }
+      });
+    </script>
+  </body>
+</html>
