@@ -229,7 +229,7 @@ def handle_message(data):
     print(f"Received message in room {room}: {data['message']}")
     socketio.emit('message', data, room=room)
     
-    
+    #브런치 확인용 주석추가
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
