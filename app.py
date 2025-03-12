@@ -361,7 +361,6 @@ def updateOrderStatus():
     else:
         return jsonify({'result': 'failure'})
 
-
 # 실시간 채팅 관련
 @socketio.on('message')
 def handle_message(data):
