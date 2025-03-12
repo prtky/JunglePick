@@ -317,10 +317,25 @@ def postChat():
         return jsonify({'result' : 'failure'})
 
 
+@app.route("/update_order_status", methods=["POST"])
+def updateOrderStatus():
+    data = request.json
+    print(data['post_id'])
+    id = ObjectId(data['post_id'])
+    new_status = data['status']
+    print(new_status)
+
+    result = db.cards.update_one({'_id' : id}, {'$set': {'status': new_status}})
+    if result.modified_count == 1:
+        return jsonify({'result': 'success'})
+    else:
+        return jsonify({'result': 'failure'})
+
+# 실시간 채팅 관련
 @socketio.on('message')
 def handle_message(data):
     print("Received message : " , data)
     socketio.emit('message', data)
-
+###
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)
