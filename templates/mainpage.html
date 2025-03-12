@@ -60,6 +60,8 @@
         text-align: center;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       }
+
+      html{background-color: #f5f5f5}
     </style>
   </head>
   <body class="has-background-light">
@@ -102,8 +104,8 @@
                     </a>
                   </div>
                   {% endif %}
-                  <div class="buttons">
-                    {% if card.writer_nickname != nickname %}
+                  
+                    {% if card.writer_nickname != nickname %}  <!-- 작성자랑 다를 때 출력 -->
                     <button class="button is-success join-party" onclick="JoinParty('{{card._id | string }}')">
                       참여하기
                     </button>
@@ -116,16 +118,20 @@
                     {% endif %}
               
                     <!-- 주문 상태 변경 드롭다운 -->
-                    {% if card.writer_nickname == nickname %}
+                    {% if card.writer_nickname == nickname %}    <!-- 작성자랑 같을 때 출력 -->
                     <div class="select is-warning">
-                      <select class="order-status" data-room="{{ card._id }}">
+                      <select class="order-status " data-room="{{ card._id }}">
                         <option value="주문 전" {% if card.status == "주문 전" %}selected{% endif %}>주문 전</option>
                         <option value="주문 중" {% if card.status == "주문 중" %}selected{% endif %}>주문 중</option>
                         <option value="주문 완료" {% if card.status == "주문 완료" %}selected{% endif %}>주문 완료</option>
                       </select>
                     </div>
                     {% endif %}
-                  </div>
+
+                    <!-- 삭제하기 버튼 추가 -->
+                    {% if card.writer_nickname == nickname %}
+                    <a href="#" class="button is-danger is-light" style="float: right;" onclick="deletePost('{{ card._id }}')">삭제🚯</a>
+                    {% endif %}
                 </div>
               </div>
             {% endfor %}
@@ -224,6 +230,30 @@
         },
       });
     }
+
+    //카드 삭제
+    function deletePost(postId) {
+      if (!confirm('정말 이 게시글을 삭제하시겠습니까?')) {
+          return; // 사용자가 취소하면 함수 종료
+      }
+  
+      fetch(`/postcard/delete/${postId}`, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          }
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.result === 'success') {
+              alert(data.msg);
+              window.location.href = '/'; // 삭제 후 메인 페이지로 이동
+          } else {
+              alert(data.msg);
+          }
+      })
+      .catch(error => console.error('Error:', error));
+  }
     </script>
   </body>
 </html>

@@ -303,6 +303,38 @@ def update_post(post_id):
     else:
         return jsonify({'result': 'failure', 'msg': '변경 사항이 없습니다.'})
     
+    
+# 게시자 카드 삭제
+@app.route('/postcard/delete/<card_id>', methods=['POST'])
+def delete_post(card_id):
+    # 토큰 받아오기
+    token_receive = request.cookies.get('mytoken')
+    
+    # 쿠키가 없는 경우: 로그인 페이지로 리디렉트
+    if not token_receive:
+        return jsonify({'result': 'failure', 'msg': '로그인이 필요합니다.'})
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.user.find_one({"id": payload['id']})
+    except jwt.ExpiredSignatureError:
+        return jsonify({'result': 'failure', 'msg': '로그인 시간이 만료되었습니다.'})
+    except jwt.exceptions.DecodeError:
+        return jsonify({'result': 'failure', 'msg': '로그인 정보가 존재하지 않습니다.'})
+
+    # 해당 게시글이 존재하는지 확인
+    existing_post = db.cards.find_one({'_id': ObjectId(card_id)})
+    if not existing_post:
+        return jsonify({'result': 'failure', 'msg': '해당 게시글을 찾을 수 없습니다.'})
+
+    # 게시글 삭제
+    delete_result = db.cards.delete_one({'_id': ObjectId(card_id)})
+
+    if delete_result.deleted_count > 0:
+        return jsonify({'result': 'success', 'msg': '게시글이 삭제되었습니다.'})
+    else:
+        return jsonify({'result': 'failure', 'msg': '게시글 삭제에 실패했습니다.'})
+    
 
 @app.route('/postchat', methods=["POST"])
 def postChat():
