@@ -217,7 +217,7 @@
                   class="button is-success join-party"
                   onclick="JoinParty('{{card._id | string }}')"
                 >
-                  참여하기
+                  주문서 보기기
                 </button>
                 {% endif %} {% endif %}
                 <!-- 수정 및 삭제 버튼 그룹 -->
@@ -354,7 +354,7 @@
                 $('#announcement').html("");
                 $('#announcement').html(card['announcement']);
                 $('#announcement-title').html("");
-                $('#announcement-title').html(card['card_title'] + '의 공지사항');
+                $('#announcement-title').html(card['card_title'] + '의 주문서');
               }
           }
         }
