@@ -199,6 +199,7 @@ def Join():
 def Post_page():
     return render_template('new_post.html')
 
+#새카드 포스팅
 @app.route('/postcard/post', methods = ['POST'])
 def PostCard():
     #토큰 받아오기
@@ -231,10 +232,13 @@ def PostCard():
         return jsonify({'result' : 'success'})
     else:
         return jsonify({'result' : 'failure'})
-
-@app.route('/modifycard/<post_id>')
-def ModifyCard():
-    render_template('edit_post.html')
+    
+#카드 수정 진입
+@app.route('/modifycard')
+def modify_card():
+    post_id = request.args.get('post_id')
+    post = db.cards.find_one({'_id': ObjectId(post_id)})  # MongoDB 사용 시
+    return render_template('edit_post.html', post=post)
     
 @app.route('/modifycard/modify', methods=['POST'])
 def Modify():
@@ -247,6 +251,57 @@ def Modify():
     delivery_fee = request.form.get('delivery_fee')
     end_time = request.form.get('end_time')
     announcement = request.form.get('announcement')
+    
+#수정 내용 카드 업데이트 
+@app.route('/postcard/update/<post_id>', methods=['POST'])
+def update_post(post_id):
+    # 토큰 받아오기
+    token_receive = request.cookies.get('mytoken')
+    
+    # 쿠키가 없는 경우: 로그인 페이지로 리디렉트
+    if not token_receive:
+        return redirect(url_for("login"))
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.user.find_one({"id": payload['id']})
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
+
+    # 프론트에서 수정된 데이터 받아오기
+    card_title = request.form.get('card_title')
+    menu_list = request.form.get('menu_list')
+    food_type = request.form.get('food_type')
+    URL_info = request.form.get('URL_info')
+    delivery_fee = request.form.get('delivery_fee')
+    end_time = request.form.get('end_time')
+    announcement = request.form.get('announcement')
+
+    # 기존 데이터가 존재하는지 확인
+    existing_post = db.cards.find_one({'_id': ObjectId(post_id)})
+    if not existing_post:
+        return jsonify({'result': 'failure', 'msg': '해당 게시글을 찾을 수 없습니다.'})
+
+    # 데이터 업데이트
+    update_result = db.cards.update_one(
+        {'_id': ObjectId(post_id)}, 
+        {'$set': {
+            'card_title': card_title,
+            'menu_list': menu_list,
+            'food_type': food_type,
+            'URL_info': URL_info,
+            'delivery_fee': delivery_fee,
+            'end_time': end_time,
+            'announcement': announcement
+        }}
+    )
+
+    if update_result.modified_count > 0:
+        return jsonify({'result': 'success'})
+    else:
+        return jsonify({'result': 'failure', 'msg': '변경 사항이 없습니다.'})
     
 @socketio.on('message')
 def handle_message(data):
