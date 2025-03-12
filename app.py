@@ -197,7 +197,7 @@ def Join():
 
 @app.route('/postcard')
 def Post_page():
-    return render_template('postcard.html')
+    return render_template('new_post.html')
 
 @app.route('/postcard/post', methods = ['POST'])
 def PostCard():
@@ -232,9 +232,9 @@ def PostCard():
     else:
         return jsonify({'result' : 'failure'})
 
-@app.route('/modifycard')
+@app.route('/modifycard/<post_id>')
 def ModifyCard():
-    render_template
+    render_template('edit_post.html')
     
 @app.route('/modifycard/modify', methods=['POST'])
 def Modify():
