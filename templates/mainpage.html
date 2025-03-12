@@ -286,11 +286,12 @@
                 <div>{{chat.nickname}} : {{chat.texts}}</div>
                 {% endfor %}
               </div>
+              <form id="messageForm">
               <div class="chat-input">
                 <input type="text" id="chat-message" placeholder="메시지를 입력하세요"/>
                 <button class="button is-link" id="send-button" onclick="PostChat()">전송</button>
               </div>
-              
+            </form>
             </div>
           </div>
         </div>
