@@ -349,8 +349,21 @@
         }
 
         function JoinParty(id){
+          const currentTime = new Date();
+          console.log(currentTime);
           for (const card of {{ cards | tojson }}){
               if(id == String(card['_id'])){
+                const [endHours, endMinutes] = card['end_time'].split(':').map(Number);
+                console.log("시" + endHours);
+                console.log("분" + endMinutes);
+                const endDate = new Date(currentTime);
+                endDate.setHours(endHours, endMinutes,0,0);
+                console.log(endDate);
+                console.log(card['end_time']);
+                if(currentTime > endDate){
+                  alert("이미 마감된 요청입니다.");
+                  location.reload();
+                }
                 $('#announcement').html("");
                 $('#announcement').html(card['announcement']);
                 $('#announcement-title').html("");
