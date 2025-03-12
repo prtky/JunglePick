@@ -15,6 +15,25 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
+
+        <!-- style -->
+        <style>
+            html, body {
+                height: 100%; /* 전체 높이를 화면 크기에 맞게 설정 */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .register-container {
+                width: 320px;
+                margin: auto;
+                text-align: center;
+            }
+
+        </style>
+
+
         <script>
 
             // 간단한 회원가입 함수입니다.
@@ -40,25 +59,26 @@
             }
 
         </script>
+
     </head>
     <body>
-        <div class="section has-text-centered">
-            <h1 class="title">회원가입 페이지</h1>
-            <div class="container" style="width:60%">
-                <div class="field is-horizontal">
+        <div class="register-container">
+            <h1 class="title is-4">회원가입 페이지</h1>
+            <div class="box">
+                <div class="field">
                     <div class="field-label is-normal">
                         <label class="label" for="nickname">이름</label>
                     </div>
                     <div class="field-body">
                         <div class="field">
                             <div class="control">
-                                <input type="text" class="input" id="nickname" placeholder="이름(기수) 조합(예시:홍길동(정글8기-1)">
+                                <input type="text" class="input" id="nickname" placeholder="예시:홍길동(정글8기-1)">
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="field is-horizontal">
+                <div class="field">
                     <div class="field-label is-normal">
                         <label class="label" for="userid">ID</label>
                     </div>
@@ -72,7 +92,7 @@
                     </div>
                 </div>
                 
-                <div class="field is-horizontal">
+                <div class="field">
                     <div class="field-label is-normal">
                         <label class="label" for="userpw">Password</label>
                     </div>
@@ -84,7 +104,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="field is-horizontal">
+                <div class="field">
                     <div class="field-label is-normal">
                         <label class="label" for="userrepw">비밀번호 확인</label>
                     </div>
