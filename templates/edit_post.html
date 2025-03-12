@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 수정</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <style>
+        .container {
+            max-width: 500px;
+            background: #fff;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        .title {
+            color: #4a4a4a;
+            font-size: 1.5rem; /* 제목 크기 조정 */
+        }
+        .button.is-primary {
+            background-color: #3273dc;
+            border-radius: 8px;
+            width: 50%; /* 버튼 너비 확장 */
+        }
+    </style>
+</head>
+<body class="has-background-light">
+    <div class="container">
+        <h1 class="title has-text-centered">게시글 수정</h1>
+        
+        <div class="field">
+            <label class="label">제목</label>
+            <div class="control">
+                <input class="input" type="text" id="card_title" value="{{ post.card_title }}">
+            </div>
+        </div>
+        
+        <div class="field">
+            <label class="label">메뉴 목록</label>
+            <div class="control">
+                <input class="input" type="text" id="menu_list" value="{{ post.menu_list }}">
+            </div>
+        </div>
+        
+        <div class="field">
+            <label class="label">음식 종류</label>
+            <div class="control">
+                <div class="select">
+                    <select id="food_type">
+                        <option>한식🍚</option>
+                        <option>중식🥟</option>
+                        <option>양식🍕</option>
+                        <option>일식🍙</option>
+                        <option>기타</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="field">
+            <label class="label">가게 정보(URL)</label>
+            <div class="control">
+                <input class="input" type="url" id="URL_info" value="{{ post.URL_info }}">
+            </div>
+        </div>
+        
+        <div class="field">
+            <label class="label">배달 비용 (원 단위)</label>
+            <div class="control">
+                <input class="input" type="number" id="delivery_cost" value="{{ post.delivery_cost }}">
+            </div>
+        </div>
+        
+        <div class="field">
+            <label class="label">마감 시간 (--:--까지)</label>
+            <div class="control">
+                <input class="input" type="time" id="end_time" value="{{ post.end_time }}">
+            </div>
+        </div>
+        
+        <div class="field">
+            <label class="label">주문서</label>
+            <div class="control">
+                <textarea class="textarea" id="announcement" value= {{ post.announcement }}"></textarea>
+            </div>
+        </div>
+        
+        <div class="field has-text-centered">
+            <button class="button is-primary" onclick="updatePost('{{ post._id }}')">게시글 수정</button>
+        </div>
+    </div>
+
+    <script>
+        function submitPost() {
+            let postData = {
+                card_title: document.getElementById('card_title').value,
+                menu_list: document.getElementById('menu_list').value,
+                food_type: document.getElementById('food_type').value,
+                URL_info: document.getElementById('URL_info').value,
+                delivery_cost: document.getElementById('delivery_cost').value,
+                end_time: document.getElementById('end_time').value,
+                announcement: document.getElementById('announcement').value
+            };
+
+            fetch('/postcard/post', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams(postData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result === 'success') {
+                    alert('게시글이 수정되었습니다!');
+                    window.location.href = '/mainpage';
+                } else {
+                    alert('수정에 실패했습니다. 다시 시도해주세요.');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
