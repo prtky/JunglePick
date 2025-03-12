@@ -355,18 +355,11 @@ def updateOrderStatus():
     new_status = data['status']
     print(new_status)
 
-    if(new_status == 'after_order'):
-        result = db.cards.delete_one({'_id': ObjectId(id)})
-        if result.deleted_count == 1:
-            return jsonify({'result': 'success'})
-        else:
-            return jsonify({'result': 'failure'})
+    result = db.cards.update_one({'_id' : id}, {'$set': {'status': new_status}})
+    if result.modified_count == 1:
+        return jsonify({'result': 'success'})
     else:
-        result = db.cards.update_one({'_id' : id}, {'$set': {'status': new_status}})
-        if result.modified_count == 1:
-            return jsonify({'result': 'success'})
-        else:
-            return jsonify({'result': 'failure'})
+        return jsonify({'result': 'failure'})
 
 
 # 실시간 채팅 관련

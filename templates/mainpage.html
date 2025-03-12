@@ -184,6 +184,7 @@
 
                 <!-- 바로가기 버튼 (URL_info가 있을 경우에만 표시) -->
                 {% if card.URL_info %}
+                {% if card.status != 'after_order'%}
                 <div class="buttons">
                   <a
                     href="{{ card.URL_info }}"
@@ -193,7 +194,9 @@
                     바로가기 🔗
                   </a>
                 </div>
-                {% endif %} {% if card.writer_nickname != nickname %} {% if
+                {% endif %}
+                {% endif %} 
+                {% if card.writer_nickname != nickname %} {% if
                 card.status == 'before_order'%}
                 <!-- 작성자랑 다를 때 출력 -->
                 <button
@@ -205,6 +208,7 @@
                 {% endif %} {% endif %}
                 <!-- 수정하기 버튼 추가 -->
                 {% if card.writer_nickname == nickname %}
+                {% if card.status != 'after_order'%}
                 <a
                   href="/modifycard?post_id={{ card._id }}"
                   class="button is-warning"
@@ -212,19 +216,20 @@
                   수정하기 ✏️
                 </a>
                 {% endif %}
-
+                {% endif %}
                 <!-- 주문 상태 변경 드롭다운 -->
                 {% if card.writer_nickname == nickname %}
+                {% if card.status != 'after_order'%}
                 <!-- 작성자랑 같을 때 출력 -->
                 <div class="select is-warning">
                   <select class="order-status" data-room="{{ card._id }}">
                     <option value="before_order" {% if card.status == "before_order" %}selected{% endif %}>주문 전</option>
-                    <option value="ordering" {% if card.status == "ordering" %}selected{% endif %}>주문 중</option>
-                    <option value="after_order" {% if card.status == "after_order" %}selected{% endif %}>주문 완료</option>
+                    <option value="ordering" {% if card.status == "ordering" %}selected{% endif %}>배달 중</option>
+                    <option value="after_order" {% if card.status == "after_order" %}selected{% endif %}>배달 완료</option>
                   </select>
                 </div>
                 {% endif %}
-
+                {% endif %}
                 <!-- 삭제하기 버튼 추가 -->
                 {% if card.writer_nickname == nickname %}
                 <a
