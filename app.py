@@ -195,10 +195,22 @@ def Join():
 
 @app.route('/postcard')
 def Post_page():
-    return render_template('')
+    return render_template('postcard.html')
 
 @app.route('/postcard/post', methods = ['POST'])
 def PostCard():
+    #토큰 받아오기
+    token_receive = request.cookies.get('mytoken')
+    # 쿠키가 없는 경우: 로그인 페이지로 리디렉트
+    if not token_receive:
+        return redirect(url_for("login"))
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.user.find_one({"id": payload['id']})
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
     # 프론트에서 새 카드 받아오기 
     card_title = request.form.get('card_title')
     menu_list = request.form.get('menu_list')
@@ -207,10 +219,11 @@ def PostCard():
     delivery_fee = request.form.get('delivery_fee')
     end_time = request.form.get('end_time')
     announcement = request.form.get('announcement')
+    writer_nickname = user_info["nick"]
 
     result = db.cards.insert_one({'card_title' : card_title, 'menu_list' : menu_list, 
         'food_type' : food_type, 'URL_info' : URL_info,
-        'delivery_fee' : delivery_fee, 'end_time' : end_time, 'announcement' : announcement})
+        'delivery_fee' : delivery_fee, 'end_time' : end_time, 'announcement' : announcement, 'writer_nickname' : writer_nickname})
 
     if result.acknowledged:
         return jsonify({'result' : 'success'})
