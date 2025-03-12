@@ -77,13 +77,31 @@
       <div class="content-wrapper">
         <div class="main-content">
           <div class="columns is-multiline" id="cards-container">
+
             {% for card in cards %}
             <div class="column is-half">
                 <div class="box">
-                  <h3 class="title is-5">{{ card.card_title }}</h3>
+                    <!-- 제목과 작성자 영역 -->
+                  <div class="is-flex is-justify-content-space-between">
+                    <h3 class="title is-5">{{ card.card_title }}</h3>
+                    <p class="has-text-grey is-size-7">
+                      작성자: {{ card.writer_nickname }}
+                    </p>
+                  </div>  
+
                   <p>메뉴: {{ card.menu_list }}</p>
                   <p>배달비: {{ card.delivery_fee }}원</p>
                   <p>마감시간: {{ card.end_time }}</p>
+
+                  <!-- 바로가기 버튼 (URL_info가 있을 경우에만 표시) -->
+                  {% if card.URL_info %}
+                  <div class="buttons">
+                    <a href="{{ card.URL_info }}" class="button is-info" target="_blank">
+                      바로가기 🔗
+                    </a>
+                  </div>
+                  {% endif %}
+    
                   <div class="buttons">
                     <button class="button is-success join-party" data-room="{{ card._id }}">
                       참여하기
