@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -31,27 +31,70 @@
         flex: 3;
       }
       .sidebar {
-        flex: 1;
+        flex: 1.5;
+      }
+      /* 주문서 카드 크기 조정 */
+      #announcement {
+        font-size: 1rem; /* 내용 글자 크기 살짝 키움 */
+        padding: 15px; /* 내부 여백 추가 */
+        border-radius: 8px;
+        background: #f9f9f9;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      /* 주문서 카드 전체 크기 키우기 */
+      .sidebar .card {
+        width: 100%; /* 가로 최대 크기 */
+        min-height: 100px; /* 세로 크기 조정 */
+        padding: 1px; /* 내부 여백 추가 */
+      }
+
+      /* 주문서 & 채팅방 제목 스타일 동일하게 적용 */
+      #announcement-title,
+      .chat-title {
+        font-size: 1.4rem; /* 제목 크기 조정 */
+        font-weight: bold;
+        text-align: center; /* 가운데 정렬 */
+        margin-bottom: 5px;
       }
       .chat-box {
         height: 40vh;
         overflow-y: auto;
         border: 1px solid #ddd;
-        padding: 2%;
+        padding: 10px;
+        margin-top: 0px;
         border-radius: 8px;
         background: #f9f9f9;
       }
       .chat-input {
-        display: flex;
-        margin-top: 2%;
+        display: flex; /* 한 줄 배치 */
+        align-items: center; /* 수직 중앙 정렬 */
+        justify-content: space-between; /* 입력창과 버튼 사이 최대 간격 유지 */
+        width: 100%; /* 부모 요소에 맞게 채팅 입력창의 너비 조정 */
+        gap: 20px; /* 입력창과 버튼 사이 간격 */
       }
+      
       .chat-input input {
-        flex: 1;
-        padding: 2%;
+        flex-grow: 1; /* 입력창이 가로로 넓게 확장되도록 설정 */
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
       }
+      
       .chat-input button {
-        margin-left: 2%;
+        padding: 10px 20px; /* 버튼 크기 키우기 */
+        border-radius: 5px;
+        background-color: #3273dc; /* Bulma 기본 파란색 */
+        color: white;
+        border: none;
+        cursor: pointer;
+        white-space: nowrap; /* 버튼 텍스트 줄바꿈 방지 */
       }
+      
+      .chat-input button:hover {
+        background-color: #275bbe; /* 버튼 호버 시 색상 변경 */
+      }
+      
       .random-menu {
         margin-top: 2%;
         padding: 2%;
@@ -114,6 +157,9 @@
                       수정하기 ✏️
                     </a>
                     {% endif %}
+                    {% if card.writer_nickname == nickname %}
+                    <button class="button is-static"> 🔄주문서 새로고침🔄 </button>
+                    {% endif %}
               
                     <!-- 주문 상태 변경 드롭다운 -->
                     {% if card.writer_nickname == nickname %}
@@ -134,27 +180,23 @@
         <div class="sidebar">
           <div class="card">
             <div class="card-content">
-              <p class="title" id="announcement-title">공지사항</p>
-              <div id="announcement"><p>공동 주문 참여 시 시간 엄수 부탁드립니다!</p></div>
+              <p class="title" id="announcement-title">주문서</p>
+              <div id="announcement">
+                <p>공동 주문 참여 시 시간 엄수 부탁드립니다!</p>
+              </div>
             </div>
           </div>
           <div class="card">
             <div class="card-content">
-              <p class="title">채팅방</p>
+              <p class="title chat-title">채팅방</p>
               <div class="chat-box" id="chat-box">
                 {% for chat in chats %}
                 <div>{{chat.nickname}} : {{chat.texts}}</div>
                 {% endfor %}
               </div>
               <div class="chat-input">
-                <form id="messageForm">
-                  <input
-                    type="text"
-                    id="chat-message"
-                    placeholder="메시지를 입력하세요"
-                  />
-                  <button class="button is-link" id="send-button" onclick="PostChat()">전송</button>
-                </form>
+                <input type="text" id="chat-message" placeholder="메시지를 입력하세요"/>
+                <button class="button is-link" id="send-button" onclick="PostChat()">전송</button>
               </div>
             </div>
           </div>
