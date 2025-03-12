@@ -62,6 +62,42 @@
       }
 
       html{background-color: #f5f5f5}
+
+
+      /* 술롯 관련 css */ 
+      .random-menu {
+        margin-top: 2%;
+        padding: 2%;
+        border-radius: 8px;
+        background: #f5f5f5;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+      .slot-machine {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        height: 70px;
+        overflow: hidden;
+      }
+      .slot-item {
+        display: flex;
+        flex-direction: column; /* 세로 정렬 */
+        justify-content: center;
+        align-items: center;
+        width: 80px;
+        text-align: center;
+        font-size: 2rem; /* 이모지 크기 */
+      }
+      .slot-item.main {
+        width: 120px; /* 가운데 슬롯 더 크게 */
+      }
+      .food-name {
+        font-size: 1.1rem; /* 가독성 좋은 크기로 조정 */
+        font-weight: bold; /* 음식 이름 강조 */
+        margin-top: 5px;
+      }
     </style>
   </head>
   <body class="has-background-light">
@@ -136,6 +172,24 @@
               </div>
             {% endfor %}
           </div>
+
+          <!-- 음식 랜덤 추천 추가 -->
+          <div class="random-menu">
+            <h2 class="title is-5 has-text-centered">🍽️ 랜덤 음식 추천 🎰</h2>
+            <div id="slot-machine" class="slot-machine">
+              <span class="slot-item side">🍕</span>
+              <span class="slot-item main">
+                <span class="emoji">🍣</span>
+                <span class="food-name">초밥</span>
+              </span>
+              <span class="slot-item side">🥟</span>
+            </div>
+            <div class="has-text-centered mt-3">
+              <button class="button is-primary" onclick="startSlotMachine()">🎲 음식 추천받기</button>
+            </div>
+          </div>
+          <script src="script.js"></script>
+
         </div>
         <div class="sidebar">
           <div class="card">
@@ -253,6 +307,56 @@
           }
       })
       .catch(error => console.error('Error:', error));
+  }
+
+  function startSlotMachine() {
+    const foodOptions = [
+      { emoji: "🍕", name: "피자" },
+      { emoji: "🍣", name: "초밥" },
+      { emoji: "🥟", name: "만두" },
+      { emoji: "🍔", name: "햄버거" },
+      { emoji: "🌮", name: "타코" },
+      { emoji: "🥗", name: "샐러드" },
+      { emoji: "🍛", name: "카레" },
+      { emoji: "🍜", name: "라면" }
+    ];
+
+    const sideSlots = document.querySelectorAll(".slot-item.side");
+    const mainSlotEmoji = document.querySelector(".slot-item.main .emoji");
+    const mainSlotName = document.querySelector(".slot-item.main .food-name");
+
+    let intervalSpeed = 80; // 초기 속도
+    let slowdownFactor = 1.15; // 점점 느려지는 효과
+    let spinTime = 2000; // 전체 애니메이션 지속 시간
+    let elapsedTime = 0;
+
+    function spinSlots() {
+      if (elapsedTime >= spinTime) {
+        // 멈출 때 최종 추천 음식 선택
+        let finalFood = foodOptions[Math.floor(Math.random() * foodOptions.length)];
+        mainSlotEmoji.innerText = finalFood.emoji;
+        mainSlotName.innerText = finalFood.name;
+        return;
+      }
+
+      // 양쪽 슬롯 랜덤 변경
+      sideSlots.forEach(slot => {
+        let randomSideFood = foodOptions[Math.floor(Math.random() * foodOptions.length)];
+        slot.innerText = randomSideFood.emoji;
+      });
+
+      // 가운데 슬롯 변경
+      let randomMainFood = foodOptions[Math.floor(Math.random() * foodOptions.length)];
+      mainSlotEmoji.innerText = randomMainFood.emoji;
+      mainSlotName.innerText = randomMainFood.name;
+
+      elapsedTime += intervalSpeed; // 경과 시간 증가
+      intervalSpeed *= slowdownFactor; // 점점 느려짐
+
+      setTimeout(spinSlots, intervalSpeed); // 다음 변경 실행
+    }
+
+    spinSlots();
   }
     </script>
   </body>
