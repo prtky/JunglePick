@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, session, redirect, url_for
+from flask import Flask, render_template, jsonify, request, session, redirect, url_for, make_response
 
 app = Flask(__name__)
 
@@ -96,9 +96,13 @@ def api_register():
     pw_receive = request.form['pw_give']
     nickname_receive = request.form['nickname_give']
     
-    # 아이디 중복 확인
+    # 이름 중복 확인
     if db.user.find_one({'nick': nickname_receive}):
         return jsonify({'result': 'fail', 'msg': '존재하는 이름입니다.'})
+    
+    # 아이디 중복 확인
+    if db.user.find_one({'id': id_receive}):
+        return jsonify({'result': 'fail', 'msg': '존재하는 아이디입니다.'})
   
   # 중요!!!!아무도(개발자라도) 암호를 해석할 수 없도록 만든다!!! 패스워드를 이런식으로 숨겨서 관리한다. 패스워드 보안에 핵심. 사용자만 패스워드를 안다.
     pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
@@ -138,6 +142,13 @@ def api_login():
     # 찾지 못하면
     else:
         return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
+    
+### [로그아웃 API]
+@app.route('/logout')
+def logout():
+    response = make_response(redirect(url_for('login')))  # 로그인 페이지로 리디렉트
+    response.set_cookie('mytoken', '', expires=0)  # ✅ 토큰 쿠키 삭제
+    return response
 
 
 # [유저 정보 확인 API]
