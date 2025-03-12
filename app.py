@@ -335,7 +335,7 @@ def delete_post(card_id):
     else:
         return jsonify({'result': 'failure', 'msg': '게시글 삭제에 실패했습니다.'})
     
-
+# 채팅 DB에 업로드
 @app.route('/postchat', methods=["POST"])
 def postChat():
     nickname = request.form.get('give_nickname')
@@ -348,7 +348,30 @@ def postChat():
     else:
         return jsonify({'result' : 'failure'})
 
+#주문 상태 업데이트
+@app.route("/update_order_status", methods=["POST"])
+def updateOrderStatus():
+    data = request.json
+    print(data['post_id'])
+    id = ObjectId(data['post_id'])
+    new_status = data['status']
+    print(new_status)
 
+    if(new_status == 'after_order'):
+        result = db.cards.delete_one({'_id': ObjectId(id)})
+        if result.deleted_count == 1:
+            return jsonify({'result': 'success'})
+        else:
+            return jsonify({'result': 'failure'})
+    else:
+        result = db.cards.update_one({'_id' : id}, {'$set': {'status': new_status}})
+        if result.modified_count == 1:
+            return jsonify({'result': 'success'})
+        else:
+            return jsonify({'result': 'failure'})
+
+
+# 실시간 채팅 관련
 @socketio.on('message')
 def handle_message(data):
     print("Received message : " , data)
