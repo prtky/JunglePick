@@ -129,7 +129,7 @@ def api_login():
         # exp에는 만료시간을 넣어줍니다(5초). 만료시간이 지나면, 시크릿키로 토큰을 풀 때 만료되었다고 에러가 납니다.
         payload = {
             'id': id_receive,
-            'exp':datetime.now(timezone.utc) + timedelta(seconds=10)
+            'exp':datetime.now(timezone.utc) + timedelta(seconds=60)
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
 
@@ -207,7 +207,6 @@ def PostCard():
         return jsonify({'result' : 'failure'})
 
 @app.route('/modifycard')
-@jwt_required()
 def ModifyCard():
     render_template
     
@@ -225,11 +224,8 @@ def Modify():
     
 @socketio.on('message')
 def handle_message(data):
-    room = data["room"]
-    print(f"Received message in room {room}: {data['message']}")
-    socketio.emit('message', data, room=room)
-    
-    
+    print("Received message : " , data)
+    socketio.emit('message', data)
 
 if __name__ == '__main__':
-    app.run('0.0.0.0', port=5000, debug=True)
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True)

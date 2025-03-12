@@ -111,12 +111,14 @@
                 {% endfor %}
               </div>
               <div class="chat-input">
-                <input
-                  type="text"
-                  id="chat-message"
-                  placeholder="메시지를 입력하세요"
-                />
-                <button class="button is-link">전송</button>
+                <form id="messageForm">
+                  <input
+                    type="text"
+                    id="chat-message"
+                    placeholder="메시지를 입력하세요"
+                  />
+                  <button class="button is-link" id="send-button">전송</button>
+                </form>
               </div>
             </div>
           </div>
@@ -128,41 +130,22 @@
       var socket = io.connect(
         "http://" + document.domain + ":" + location.port
       );
-      var currentRoom = null;
-
-      // 카드별 채팅방 버튼 클릭 이벤트 추가
-      $(".join-party").click(function () {
-        var room_id = $(this).data("room"); // 카드별 채팅방 ID 가져오기
-
-        if (currentRoom) {
-          socket.emit("leave", { room: currentRoom }); // 기존 채팅방 나가기
-        }
-
-        currentRoom = room_id;
-        socket.emit("join", { room: room_id }); // 새로운 채팅방 입장
-
-        $("#chat-box").html(""); // 채팅방 변경 시 기존 메시지 초기화
-      });
 
       socket.on("message", function (data) {
-        // 추후 로그인 성공하면 로그인 정보에서 가져오기
-        // var userName = $("#formUser").val();
-        if (data.room === currentRoom) {
-          var contentSpan = $("#chat-box");
-          var content = $("<div></div>").text(data.message);
-          contentSpan.append(content);
-        }
+        var userName = $("{{nickname}}").val();
+        var contentSpan = $("#chat-box");
+        var content = $("<div></div>").text(data.user + " : " + data.message);
+        contentSpan.append(content);
       });
 
       $("#messageForm").submit(function (event) {
         event.preventDefault();
 
+        var userName = "{{ nickname | safe }}";
         var userMessage = $("#chat-message").val();
 
-        if (userMessage && currentRoom) {
-          socket.emit("message", { message: userMessage, room: currentRoom });
-          $("#chat-message").val(""); // 입력란 초기화
-        }
+        socket.emit("message", { user: userName, message: userMessage });
+        $("#chat-message").val("");
       });
     </script>
   </body>
