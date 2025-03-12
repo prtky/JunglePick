@@ -68,7 +68,7 @@
         <div class="field">
             <label class="label">배달 비용 (원 단위)</label>
             <div class="control">
-                <input class="input" type="number" id="delivery_cost" value="{{ post.delivery_cost }}">
+                <input class="input" type="number" id="delivery_fee" value="{{ post.delivery_fee }}">
             </div>
         </div>
         
@@ -98,7 +98,7 @@
                 menu_list: document.getElementById('menu_list').value,
                 food_type: document.getElementById('food_type').value,
                 URL_info: document.getElementById('URL_info').value,
-                delivery_cost: document.getElementById('delivery_cost').value,
+                delivery_fee: document.getElementById('delivery_fee').value,
                 end_time: document.getElementById('end_time').value,
                 announcement: document.getElementById('announcement').value
             };
@@ -114,7 +114,7 @@
             .then(data => {
                 if (data.result === 'success') {
                     alert('게시글이 수정되었습니다!');
-                    window.location.href = '/mainpage';
+                    window.location.href = '/';
                 } else {
                     alert('수정에 실패했습니다. 다시 시도해주세요.');
                 }

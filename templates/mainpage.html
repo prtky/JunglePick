@@ -108,7 +108,7 @@
                     </button>
 
                     <!-- 수정하기 버튼 추가 -->
-                    <a href="/edit_post?post_id={{ card._id }}" class="button is-warning">
+                    <a href="/modifycard?post_id={{ card._id }}" class="button is-warning">
                       수정하기 ✏️
                     </a>
               
@@ -194,7 +194,11 @@
     }
 
     function JoinParty(id){
-      console.log(id);
+      for (const card of {{ cards | tojson }}){
+          if(id == String(card['_id'])){
+            
+          }
+      }
     }
     </script>
   </body>
