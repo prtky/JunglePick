@@ -10,7 +10,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
     />
-    
+    <style>
       .container {
         width: 90%;
         margin: auto;
@@ -65,32 +65,41 @@
   <body class="has-background-light">
     <div class="container">
       <h1 class="title has-text-centered">메인 페이지</h1>
-      <h5 class="subtitle">나의 닉네임은: {{nickname}}</h5>
+      <div class="is-flex is-justify-content-flex-end mb-4">
+        <h6 class="subtitle">
+         {{nickname}}님 환영합니다😊
+          <button class="button is-danger is-small ml-2" onclick="logout()">로그아웃</button>
+        </h6>
+      </div>
       <div class="has-text-left">
         <a href="/postcard" class="button is-primary">새 게시글 작성</a>
       </div>
       <div class="content-wrapper">
         <div class="main-content">
           <div class="columns is-multiline" id="cards-container">
-            <!-- 카드들이 여기에 동적으로 추가될 예정 -->
             {% for card in cards %}
             <div class="column is-half">
-              <div class="box">
-                <h3 class="title is-5">{{card.card_title}}</h3>
-                <p>메뉴: {{card.menu_list}}</p>
-                <p>배달비: {{card.delivery_fee}}원</p>
-                <p>마감시간: {{card.end_time}}</p>
-                <div class="buttons">
-                  <button
-                    class="button is-success join-party"
-                    data-room="{{ card._id }}"
-                  >
-                    참여하기
-                  </button>
-                  <button class="button is-warning">주문 상태 변경</button>
+                <div class="box">
+                  <h3 class="title is-5">{{ card.card_title }}</h3>
+                  <p>메뉴: {{ card.menu_list }}</p>
+                  <p>배달비: {{ card.delivery_fee }}원</p>
+                  <p>마감시간: {{ card.end_time }}</p>
+                  <div class="buttons">
+                    <button class="button is-success join-party" data-room="{{ card._id }}">
+                      참여하기
+                    </button>
+              
+                    <!-- 주문 상태 변경 드롭다운 -->
+                    <div class="select is-warning">
+                      <select class="order-status" data-room="{{ card._id }}">
+                        <option value="주문 전" {% if card.status == "주문 전" %}selected{% endif %}>주문 전</option>
+                        <option value="주문 중" {% if card.status == "주문 중" %}selected{% endif %}>주문 중</option>
+                        <option value="주문 완료" {% if card.status == "주문 완료" %}selected{% endif %}>주문 완료</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
             {% endfor %}
           </div>
         </div>
@@ -105,7 +114,6 @@
             <div class="card-content">
               <p class="title">채팅방</p>
               <div class="chat-box" id="chat-box">
-                <!-- 채팅 메시지가 여기에 추가됨 -->
                 {% for chat in chats %}
                 <div>{{chat.name}} : {{chat.texts}}</div>
                 {% endfor %}
@@ -147,6 +155,12 @@
         socket.emit("message", { user: userName, message: userMessage });
         $("#chat-message").val("");
       });
+
+      function logout() {
+        $.removeCookie('mytoken');
+        alert('로그아웃 되었습니다!');
+        window.location.href = '/login';
+      }
     </script>
   </body>
 </html>
