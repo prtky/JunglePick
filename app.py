@@ -40,7 +40,6 @@ client = MongoClient('localhost',27017)
 ################################################################################################################################ 배포시 수정할 부분
 #client = MongoClient('mongodb://test:test@3.37.36.71',27017) 
 db = client.dbjungle
-chatdb = client.dbchat
 
 @app.errorhandler(NoAuthorizationError)
 @app.errorhandler(Unauthorized)
@@ -55,7 +54,7 @@ def handle_auth_error(e):
 def home():
     token_receive = request.cookies.get('mytoken')
     cards = list(db.cards.find({}))
-    chats = list(chatdb.chats.find({}))
+    chats = list(db.chats.find({}))
     for card in cards:
         card['_id'] =str(card['_id'])
     
@@ -248,6 +247,18 @@ def Modify():
     end_time = request.form.get('end_time')
     announcement = request.form.get('announcement')
     
+@app.route('/postchat', methods=["POST"])
+def postChat():
+    nickname = request.form.get('give_nickname')
+    texts = request.form.get('give_texts')
+
+    result = db.chats.insert_one({'nickname' : nickname, "texts" : texts})
+    if result.acknowledged:
+        print("저장됨")
+        return jsonify({'result' : 'success'})
+    else:
+        return jsonify({'result' : 'failure'})
+
 @socketio.on('message')
 def handle_message(data):
     print("Received message : " , data)
