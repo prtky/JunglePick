@@ -61,10 +61,11 @@
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       }
 
-      html{background-color: #f5f5f5}
+      html {
+        background-color: #f5f5f5;
+      }
 
-
-      /* 술롯 관련 css */ 
+      /* 술롯 관련 css */
       .random-menu {
         margin-top: 2%;
         padding: 2%;
@@ -105,71 +106,94 @@
       <h1 class="title has-text-centered">Jungle PICK!</h1>
       <div class="is-flex is-justify-content-flex-end mb-4">
         <h6 class="subtitle">
-         {{nickname}}님 환영합니다😊
-          <button class="button is-danger is-small ml-2" onclick="logout()">로그아웃</button>
+          {{nickname}}님 환영합니다😊
+          <button class="button is-danger is-small ml-2" onclick="logout()">
+            로그아웃
+          </button>
         </h6>
       </div>
       <div class="has-text-left">
         <a href="/postcard" class="button is-primary">새 게시글 작성</a>
       </div>
-      <br>
+      <br />
       <div class="content-wrapper">
         <div class="main-content">
           <div class="columns is-multiline" id="cards-container">
-
             {% for card in cards %}
             <div class="column is-half">
-                <div class="box" id="{{card._id | string }}">
-                    <!-- 제목과 작성자 영역 -->
-                  <div class="is-flex is-justify-content-space-between">
-                    <h3 class="title is-5">{{ card.card_title }}</h3>
-                    <p class="has-text-grey is-size-7">
-                      작성자: {{ card.writer_nickname }}
-                    </p>
-                  </div>  
-
-                  <p>메뉴: {{ card.menu_list }}</p>
-                  <p>배달비: {{ card.delivery_fee }}원</p>
-                  <p>마감시간: {{ card.end_time }}</p>
-
-                  <!-- 바로가기 버튼 (URL_info가 있을 경우에만 표시) -->
-                  {% if card.URL_info %}
-                  <div class="buttons">
-                    <a href="{{ card.URL_info }}" class="button is-info" target="_blank">
-                      바로가기 🔗
-                    </a>
-                  </div>
-                  {% endif %}
-                  
-                    {% if card.writer_nickname != nickname %}  <!-- 작성자랑 다를 때 출력 -->
-                    <button class="button is-success join-party" onclick="JoinParty('{{card._id | string }}')">
-                      참여하기
-                    </button>
-                    {% endif %}
-                    <!-- 수정하기 버튼 추가 -->
-                    {% if card.writer_nickname == nickname %}
-                    <a href="/modifycard?post_id={{ card._id }}" class="button is-warning">
-                      수정하기 ✏️
-                    </a>
-                    {% endif %}
-              
-                    <!-- 주문 상태 변경 드롭다운 -->
-                    {% if card.writer_nickname == nickname %}    <!-- 작성자랑 같을 때 출력 -->
-                    <div class="select is-warning">
-                      <select class="order-status " data-room="{{ card._id }}">
-                        <option value="주문 전" {% if card.status == "주문 전" %}selected{% endif %}>주문 전</option>
-                        <option value="주문 중" {% if card.status == "주문 중" %}selected{% endif %}>주문 중</option>
-                        <option value="주문 완료" {% if card.status == "주문 완료" %}selected{% endif %}>주문 완료</option>
-                      </select>
-                    </div>
-                    {% endif %}
-
-                    <!-- 삭제하기 버튼 추가 -->
-                    {% if card.writer_nickname == nickname %}
-                    <a href="#" class="button is-danger is-light" style="float: right;" onclick="deletePost('{{ card._id }}')">삭제🚯</a>
-                    {% endif %}
+              <div
+                class="box {% if card.status == 'before_order'%} has-background-white-bis {% elif card.status == 'ordering'%} has-background-grey {% else %} has-background-black-ter {% endif %}"
+                id="{{card._id | string }}"
+              >
+                <!-- 제목과 작성자 영역 -->
+                <div class="is-flex is-justify-content-space-between">
+                  <h3 class="title is-5">{{ card.card_title }}</h3>
+                  <p
+                    class="{% if card.status == 'before_order'%} has-text-grey {% elif card.status == 'ordering'%} has-text-white {% endif %} is-size-7"
+                  >
+                    작성자: {{ card.writer_nickname }}
+                  </p>
                 </div>
+
+                <p>메뉴: {{ card.menu_list }}</p>
+                <p>배달비: {{ card.delivery_fee }}원</p>
+                <p>마감시간: {{ card.end_time }}</p>
+
+                <!-- 바로가기 버튼 (URL_info가 있을 경우에만 표시) -->
+                {% if card.URL_info %}
+                <div class="buttons">
+                  <a
+                    href="{{ card.URL_info }}"
+                    class="button is-info"
+                    target="_blank"
+                  >
+                    바로가기 🔗
+                  </a>
+                </div>
+                {% endif %} {% if card.writer_nickname != nickname %} {% if
+                card.status == 'before_order'%}
+                <!-- 작성자랑 다를 때 출력 -->
+                <button
+                  class="button is-success join-party"
+                  onclick="JoinParty('{{card._id | string }}')"
+                >
+                  참여하기
+                </button>
+                {% endif %} {% endif %}
+                <!-- 수정하기 버튼 추가 -->
+                {% if card.writer_nickname == nickname %}
+                <a
+                  href="/modifycard?post_id={{ card._id }}"
+                  class="button is-warning"
+                >
+                  수정하기 ✏️
+                </a>
+                {% endif %}
+
+                <!-- 주문 상태 변경 드롭다운 -->
+                {% if card.writer_nickname == nickname %}
+                <!-- 작성자랑 같을 때 출력 -->
+                <div class="select is-warning">
+                  <select class="order-status" data-room="{{ card._id }}">
+                    <option value="before_order" {% if card.status == "before_order" %}selected{% endif %}>주문 전</option>
+                    <option value="ordering" {% if card.status == "ordering" %}selected{% endif %}>주문 중</option>
+                    <option value="after_order" {% if card.status == "after_order" %}selected{% endif %}>주문 완료</option>
+                  </select>
+                </div>
+                {% endif %}
+
+                <!-- 삭제하기 버튼 추가 -->
+                {% if card.writer_nickname == nickname %}
+                <a
+                  href="#"
+                  class="button is-danger is-light"
+                  style="float: right"
+                  onclick="deletePost('{{ card._id }}')"
+                  >삭제🚯</a
+                >
+                {% endif %}
               </div>
+            </div>
             {% endfor %}
           </div>
 
@@ -185,17 +209,20 @@
               <span class="slot-item side">🥟</span>
             </div>
             <div class="has-text-centered mt-3">
-              <button class="button is-primary" onclick="startSlotMachine()">🎲 음식 추천받기</button>
+              <button class="button is-primary" onclick="startSlotMachine()">
+                🎲 음식 추천받기
+              </button>
             </div>
           </div>
           <script src="script.js"></script>
-
         </div>
         <div class="sidebar">
           <div class="card">
             <div class="card-content">
               <p class="title" id="announcement-title">공지사항</p>
-              <div id="announcement"><p>공동 주문 참여 시 시간 엄수 부탁드립니다!</p></div>
+              <div id="announcement">
+                <p>공동 주문 참여 시 시간 엄수 부탁드립니다!</p>
+              </div>
             </div>
           </div>
           <div class="card">
@@ -213,7 +240,13 @@
                     id="chat-message"
                     placeholder="메시지를 입력하세요"
                   />
-                  <button class="button is-link" id="send-button" onclick="PostChat()">전송</button>
+                  <button
+                    class="button is-link"
+                    id="send-button"
+                    onclick="PostChat()"
+                  >
+                    전송
+                  </button>
                 </form>
               </div>
             </div>
@@ -221,143 +254,168 @@
         </div>
       </div>
     </div>
-    <div id="cards-data" data-cards='{{ cards | tojson | safe }}'></div>
+    <div id="cards-data" data-cards="{{ cards | tojson | safe }}"></div>
     <script>
-      var socket = io.connect(
-        "http://" + document.domain + ":" + location.port
-      );
+          var socket = io.connect(
+            "http://" + document.domain + ":" + location.port
+          );
 
-      socket.on("message", function (data) {
-        var userName = "{{ nickname | safe }}";
-        var contentSpan = $("#chat-box");
-        var content = $("<div></div>").text(data.user + " : " + data.message);
-        contentSpan.append(content);
-      });
+          socket.on("message", function (data) {
+            var userName = "{{ nickname | safe }}";
+            var contentSpan = $("#chat-box");
+            var content = $("<div></div>").text(data.user + " : " + data.message);
+            contentSpan.append(content);
+          });
 
-      $("#messageForm").submit(function (event) {
-        event.preventDefault();
+          $("#messageForm").submit(function (event) {
+            event.preventDefault();
 
-        var userName = "{{ nickname | safe }}";
-        var userMessage = $("#chat-message").val();
+            var userName = "{{ nickname | safe }}";
+            var userMessage = $("#chat-message").val();
 
-        socket.emit("message", { user: userName, message: userMessage });
-        $("#chat-message").val("");
-      });
+            socket.emit("message", { user: userName, message: userMessage });
+            $("#chat-message").val("");
+          });
 
-      function logout() {
-        $.ajax({
-            type: "GET",
-            url: "/logout",
-            success: function () {
-                alert("로그아웃 되었습니다!");
-                window.location.href = "/login";  // 로그인 페이지로 이동
+          function logout() {
+            $.ajax({
+                type: "GET",
+                url: "/logout",
+                success: function () {
+                    alert("로그아웃 되었습니다!");
+                    window.location.href = "/login";  // 로그인 페이지로 이동
+                },
+                error: function () {
+                    alert("로그아웃 처리 중 오류가 발생했습니다.");
+                }
+            });
+        }
+
+        function JoinParty(id){
+          for (const card of {{ cards | tojson }}){
+              if(id == String(card['_id'])){
+                $('#announcement').html("");
+                $('#announcement').html(card['announcement']);
+                $('#announcement-title').html("");
+                $('#announcement-title').html(card['card_title'] + '의 공지사항');
+              }
+          }
+        }
+
+        function PostChat() {
+          let get_texts = $("#chat-message").val();
+          let get_nickname = {{ nickname  | safe | tojson}};
+
+          $.ajax({
+            type: "POST",
+            url: "/postchat",
+            data: { give_nickname: get_nickname, give_texts: get_texts },
+            success: function (response) {
+              if (response["result"] == "success") {
+                console.log("DB에 채팅 저장");
+              }
             },
-            error: function () {
-                alert("로그아웃 처리 중 오류가 발생했습니다.");
+          });
+        }
+
+        //카드 삭제
+        function deletePost(postId) {
+          if (!confirm('정말 이 게시글을 삭제하시겠습니까?')) {
+              return; // 사용자가 취소하면 함수 종료
+          }
+
+          fetch(`/postcard/delete/${postId}`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              }
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.result === 'success') {
+                  alert(data.msg);
+                  window.location.href = '/'; // 삭제 후 메인 페이지로 이동
+              } else {
+                  alert(data.msg);
+              }
+          })
+          .catch(error => console.error('Error:', error));
+      }
+
+      ///////슬롯머신 관련 스크립트/////////
+      function startSlotMachine() {
+        const foodOptions = [
+          { emoji: "🍕", name: "피자" },
+          { emoji: "🍣", name: "초밥" },
+          { emoji: "🥟", name: "만두" },
+          { emoji: "🍔", name: "햄버거" },
+          { emoji: "🌮", name: "타코" },
+          { emoji: "🥗", name: "샐러드" },
+          { emoji: "🍛", name: "카레" },
+          { emoji: "🍜", name: "라면" }
+        ];
+
+        const sideSlots = document.querySelectorAll(".slot-item.side");
+        const mainSlotEmoji = document.querySelector(".slot-item.main .emoji");
+        const mainSlotName = document.querySelector(".slot-item.main .food-name");
+
+        let intervalSpeed = 80; // 초기 속도
+        let slowdownFactor = 1.15; // 점점 느려지는 효과
+        let spinTime = 2000; // 전체 애니메이션 지속 시간
+        let elapsedTime = 0;
+
+        function spinSlots() {
+          if (elapsedTime >= spinTime) {
+            // 멈출 때 최종 추천 음식 선택
+            let finalFood = foodOptions[Math.floor(Math.random() * foodOptions.length)];
+            mainSlotEmoji.innerText = finalFood.emoji;
+            mainSlotName.innerText = finalFood.name;
+            return;
+          }
+
+          // 양쪽 슬롯 랜덤 변경
+          sideSlots.forEach(slot => {
+            let randomSideFood = foodOptions[Math.floor(Math.random() * foodOptions.length)];
+            slot.innerText = randomSideFood.emoji;
+          });
+
+          // 가운데 슬롯 변경
+          let randomMainFood = foodOptions[Math.floor(Math.random() * foodOptions.length)];
+          mainSlotEmoji.innerText = randomMainFood.emoji;
+          mainSlotName.innerText = randomMainFood.name;
+
+          elapsedTime += intervalSpeed; // 경과 시간 증가
+          intervalSpeed *= slowdownFactor; // 점점 느려짐
+
+          setTimeout(spinSlots, intervalSpeed); // 다음 변경 실행
+        }
+
+        spinSlots();
+      }
+      ///////슬롯머신 관련 스크립트/////////
+
+
+      //////주문 상태 변경//////
+      $(document).ready(function(){
+        $(".order-status").change(function () {
+        var selectedStatus = $(this).val();
+        var postId = $(this).data("room");
+
+        $.ajax({
+          type: "POST",  // 상태 변경 요청
+          url: "/update_order_status",  // Flask 서버의 엔드포인트
+          data: JSON.stringify({ post_id: postId, status: selectedStatus }),
+          contentType: "application/json",
+          success: function (response) {
+            if (response["result"] == "success") {
+              alert("수정 완료!");
+            location.reload();  // 요청 성공 시 페이지 새로고침
             }
+          }
         });
-    }
-
-    function JoinParty(id){
-      for (const card of {{ cards | tojson }}){
-          if(id == String(card['_id'])){
-            $('#announcement').html("");
-            $('#announcement').html(card['announcement']);
-            $('#announcement-title').html("");
-            $('#announcement-title').html(card['card_title'] + '의 공지사항');
-          }
-      }
-    }
-
-    function PostChat() {
-      let get_texts = $("#chat-message").val();
-      let get_nickname = {{ nickname  | safe | tojson}};
-
-      $.ajax({
-        type: "POST",
-        url: "/postchat",
-        data: { give_nickname: get_nickname, give_texts: get_texts },
-        success: function (response) {
-          if (response["result"] == "success") {
-            console.log("DB에 채팅 저장");
-          }
-        },
       });
-    }
-
-    //카드 삭제
-    function deletePost(postId) {
-      if (!confirm('정말 이 게시글을 삭제하시겠습니까?')) {
-          return; // 사용자가 취소하면 함수 종료
-      }
-  
-      fetch(`/postcard/delete/${postId}`, {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json'
-          }
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.result === 'success') {
-              alert(data.msg);
-              window.location.href = '/'; // 삭제 후 메인 페이지로 이동
-          } else {
-              alert(data.msg);
-          }
-      })
-      .catch(error => console.error('Error:', error));
-  }
-
-  function startSlotMachine() {
-    const foodOptions = [
-      { emoji: "🍕", name: "피자" },
-      { emoji: "🍣", name: "초밥" },
-      { emoji: "🥟", name: "만두" },
-      { emoji: "🍔", name: "햄버거" },
-      { emoji: "🌮", name: "타코" },
-      { emoji: "🥗", name: "샐러드" },
-      { emoji: "🍛", name: "카레" },
-      { emoji: "🍜", name: "라면" }
-    ];
-
-    const sideSlots = document.querySelectorAll(".slot-item.side");
-    const mainSlotEmoji = document.querySelector(".slot-item.main .emoji");
-    const mainSlotName = document.querySelector(".slot-item.main .food-name");
-
-    let intervalSpeed = 80; // 초기 속도
-    let slowdownFactor = 1.15; // 점점 느려지는 효과
-    let spinTime = 2000; // 전체 애니메이션 지속 시간
-    let elapsedTime = 0;
-
-    function spinSlots() {
-      if (elapsedTime >= spinTime) {
-        // 멈출 때 최종 추천 음식 선택
-        let finalFood = foodOptions[Math.floor(Math.random() * foodOptions.length)];
-        mainSlotEmoji.innerText = finalFood.emoji;
-        mainSlotName.innerText = finalFood.name;
-        return;
-      }
-
-      // 양쪽 슬롯 랜덤 변경
-      sideSlots.forEach(slot => {
-        let randomSideFood = foodOptions[Math.floor(Math.random() * foodOptions.length)];
-        slot.innerText = randomSideFood.emoji;
       });
-
-      // 가운데 슬롯 변경
-      let randomMainFood = foodOptions[Math.floor(Math.random() * foodOptions.length)];
-      mainSlotEmoji.innerText = randomMainFood.emoji;
-      mainSlotName.innerText = randomMainFood.name;
-
-      elapsedTime += intervalSpeed; // 경과 시간 증가
-      intervalSpeed *= slowdownFactor; // 점점 느려짐
-
-      setTimeout(spinSlots, intervalSpeed); // 다음 변경 실행
-    }
-
-    spinSlots();
-  }
+      //////주문 상태 변경//////
     </script>
   </body>
 </html>
