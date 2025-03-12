@@ -225,7 +225,7 @@ def PostCard():
 
     result = db.cards.insert_one({'card_title' : card_title, 'menu_list' : menu_list, 
         'food_type' : food_type, 'URL_info' : URL_info,
-        'delivery_fee' : delivery_fee, 'end_time' : end_time, 'announcement' : announcement, 'writer_nickname' : writer_nickname})
+        'delivery_fee' : delivery_fee, 'end_time' : end_time, 'announcement' : announcement, 'writer_nickname' : writer_nickname, 'status' : 'before_order'})
 
     if result.acknowledged:
         return jsonify({'result' : 'success'})
