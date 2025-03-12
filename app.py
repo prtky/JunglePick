@@ -37,6 +37,8 @@ from flask_socketio import SocketIO
 
 socketio = SocketIO(app)
 client = MongoClient('localhost',27017)
+################################################################################################################################ 배포시 수정할 부분
+#client = MongoClient('mongodb://test:test@3.37.36.71',27017) 
 db = client.dbjungle
 chatdb = client.dbchat
 
