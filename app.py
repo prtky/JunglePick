@@ -255,21 +255,6 @@ def Modify():
 #수정 내용 카드 업데이트 
 @app.route('/postcard/update/<post_id>', methods=['POST'])
 def update_post(post_id):
-    # 토큰 받아오기
-    token_receive = request.cookies.get('mytoken')
-    
-    # 쿠키가 없는 경우: 로그인 페이지로 리디렉트
-    if not token_receive:
-        return redirect(url_for("login"))
-
-    try:
-        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        user_info = db.user.find_one({"id": payload['id']})
-    except jwt.ExpiredSignatureError:
-        return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
-    except jwt.exceptions.DecodeError:
-        return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
-
     # 프론트에서 수정된 데이터 받아오기
     card_title = request.form.get('card_title')
     menu_list = request.form.get('menu_list')
@@ -305,21 +290,6 @@ def update_post(post_id):
 # 게시자 카드 삭제
 @app.route('/postcard/delete/<card_id>', methods=['POST'])
 def delete_post(card_id):
-    # 토큰 받아오기
-    token_receive = request.cookies.get('mytoken')
-    
-    # 쿠키가 없는 경우: 로그인 페이지로 리디렉트
-    if not token_receive:
-        return jsonify({'result': 'failure', 'msg': '로그인이 필요합니다.'})
-
-    try:
-        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        user_info = db.user.find_one({"id": payload['id']})
-    except jwt.ExpiredSignatureError:
-        return jsonify({'result': 'failure', 'msg': '로그인 시간이 만료되었습니다.'})
-    except jwt.exceptions.DecodeError:
-        return jsonify({'result': 'failure', 'msg': '로그인 정보가 존재하지 않습니다.'})
-
     # 해당 게시글이 존재하는지 확인
     existing_post = db.cards.find_one({'_id': ObjectId(card_id)})
     if not existing_post:
@@ -333,7 +303,7 @@ def delete_post(card_id):
     else:
         return jsonify({'result': 'failure', 'msg': '게시글 삭제에 실패했습니다.'})
     
-# 채팅 DB에 업로드
+
 @app.route('/postchat', methods=["POST"])
 def postChat():
     nickname = request.form.get('give_nickname')
@@ -346,23 +316,7 @@ def postChat():
     else:
         return jsonify({'result' : 'failure'})
 
-#주문 상태 업데이트
-@app.route("/update_order_status", methods=["POST"])
-def updateOrderStatus():
-    data = request.json
-    print(data['post_id'])
-    id = ObjectId(data['post_id'])
-    new_status = data['status']
-    print(new_status)
 
-    result = db.cards.update_one({'_id' : id}, {'$set': {'status': new_status}})
-    if result.modified_count == 1:
-        return jsonify({'result': 'success'})
-    else:
-        return jsonify({'result': 'failure'})
-
-
-# 실시간 채팅 관련
 @socketio.on('message')
 def handle_message(data):
     print("Received message : " , data)
