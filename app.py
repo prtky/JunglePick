@@ -134,7 +134,7 @@ def api_login():
         # exp에는 만료시간을 넣어줍니다(5초). 만료시간이 지나면, 시크릿키로 토큰을 풀 때 만료되었다고 에러가 납니다.
         payload = {
             'id': id_receive,
-            'exp':datetime.now(timezone.utc) + timedelta(seconds=60)
+            'exp':datetime.now(timezone.utc) + timedelta(days=2)
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
 
