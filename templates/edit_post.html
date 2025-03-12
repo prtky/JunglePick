@@ -93,22 +93,6 @@
     </div>
 
     <script>
-        //카드 이름부분 정규식 검사
-        function validateNameFormat(cardname) {
-            // 정규 표현식: "이름(정글8기-숫자)" 패턴 검사
-            let regex = /^{0,35}$/;
-        
-            return regex.test(cardname);
-        }
-
-        function updatePost(postId) {
-            // 비밀번호와 재확인 비밀번호가 일치하는지 검사
-        if ($('#userpw').val() !== $('#userrepw').val()) {
-            alert("입력한 비밀번호가 서로 다릅니다. 다시 확인해주세요.");
-            return; // 서버 요청을 보내지 않음
-        }
-
-
             let postData = {
                 card_title: document.getElementById('card_title').value,
                 menu_list: document.getElementById('menu_list').value,
