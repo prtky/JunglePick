@@ -145,6 +145,17 @@
         font-weight: bold; /* 음식 이름 강조 */
         margin-top: 5px;
       }
+
+      .buttons-wrapper {
+        display: flex;               /* 버튼들을 한 줄에 배치 */
+        align-items: center;         /* 버튼들의 높이를 맞춤 */
+        justify-content: flex-start; /* 왼쪽 정렬 */
+        gap: 10px;                   /* 버튼 사이 간격 조정 */
+    }
+    
+    .delete-button {
+        margin-left: auto;           /* 삭제 버튼을 오른쪽으로 밀어냄 */
+    }
     </style>
   </head>
   <body class="has-background-light">
@@ -209,6 +220,8 @@
                   참여하기
                 </button>
                 {% endif %} {% endif %}
+                <!-- 수정 및 삭제 버튼 그룹 -->
+                <div class="buttons-wrapper">
                 <!-- 수정하기 버튼 추가 -->
                 {% if card.writer_nickname == nickname %}
                 {% if card.status != 'after_order'%}
@@ -243,6 +256,7 @@
                   >삭제🚯</a
                 >
                 {% endif %}
+              </div>
               </div>
             </div>
             {% endfor %}
