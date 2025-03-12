@@ -239,18 +239,6 @@ def modify_card():
     post = db.cards.find_one({'_id': ObjectId(post_id)})  # MongoDB 사용 시
     return render_template('edit_post.html', post=post)
     
-@app.route('/modifycard/modify', methods=['POST'])
-def Modify():
-    id = request.form.get('')
-    id = ObjectId(id)
-    card_title = request.form.get('card_title')
-    menu_list = request.form.get('menu_list')
-    food_type = request.form.get('food_type')
-    URL_info = request.form.get('URL_info')
-    delivery_fee = request.form.get('delivery_fee')
-    end_time = request.form.get('end_time')
-    announcement = request.form.get('announcement')
-    
 
 #수정 내용 카드 업데이트 
 @app.route('/postcard/update/<post_id>', methods=['POST'])
