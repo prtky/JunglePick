@@ -82,7 +82,8 @@
         <div class="field">
             <label class="label">주문서</label>
             <div class="control">
-                <textarea class="textarea" id="announcement" value= "{{ post.announcement }}"></textarea>
+                <!--텍스트 에리아 이기 때문에 벨류 값으로 처리하면 값이 안보인다.-->
+                <textarea class="textarea" id="announcement">{{ post.announcement }}</textarea>
             </div>
         </div>
         

@@ -134,7 +134,7 @@ def api_login():
         # exp에는 만료시간을 넣어줍니다(5초). 만료시간이 지나면, 시크릿키로 토큰을 풀 때 만료되었다고 에러가 납니다.
         payload = {
             'id': id_receive,
-            'exp':datetime.now(timezone.utc) + timedelta(days=2)
+            'exp':datetime.now(timezone.utc) + timedelta(days=2)  #####################################################################해당 부분이 토큰 기한 지정
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
 
@@ -298,10 +298,8 @@ def update_post(post_id):
         }}
     )
 
-    if update_result.modified_count > 0:
-        return jsonify({'result': 'success'})
-    else:
-        return jsonify({'result': 'failure', 'msg': '변경 사항이 없습니다.'})
+    return jsonify({'result': 'success'})
+
     
     
 # 게시자 카드 삭제
