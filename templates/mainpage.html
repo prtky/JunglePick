@@ -326,20 +326,22 @@
           );
 
           socket.on("message", function (data) {
-            var userName = "{{ nickname | safe }}";
-            var contentSpan = $("#chat-box");
-            if(data.user == userName){
-              console.log("너가올린 채팅이여")
-              var content = $('<div style="color: green;"></div>').text(data.user + " : " + data.message);
+            let chatBox = document.getElementById("chat-box");
+        
+            let newMessage = document.createElement("div");
+            newMessage.textContent = data.user + " : " + data.message;
+        
+            // 본인이 보낸 채팅일 경우 색상 변경
+            if (data.user === "{{ nickname | safe }}") {
+                newMessage.style.color = "green";
             }
-            else{
-              var content = $("<div></div>").text(data.user + " : " + data.message);
-            }
-            contentSpan.append(content);
-
+        
+            chatBox.appendChild(newMessage);
+        
             // 최신 메시지로 스크롤 이동
-            scrollToBottom(); 
-          });
+            scrollToBottom();
+        });
+        
 
           $("#messageForm").submit(function (event) {
             event.preventDefault();
@@ -394,6 +396,10 @@
           let get_texts = $("#chat-message").val();
           let get_nickname = {{ nickname  | safe | tojson }};
       
+          // 메시지가 비어있으면 전송 안 함
+          if (!get_texts.trim()) return;
+      
+          // 서버에 메시지 전송 (DB에 저장)
           $.ajax({
               type: "POST",
               url: "/postchat",
@@ -402,23 +408,14 @@
                   if (response["result"] == "success") {
                       console.log("DB에 채팅 저장");
       
-                      // 채팅창에 메시지 추가
-                      let chatBox = document.getElementById("chat-box");
-                      let newMessage = document.createElement("div");
-                      newMessage.textContent = get_nickname + " : " + get_texts;
-                      newMessage.style.color = "green";  // 본인이 보낸 메시지는 초록색
-                      chatBox.appendChild(newMessage);
-      
-                      // 입력창 초기화
+                      // 입력창 초기화 (채팅 전송 후)
                       $("#chat-message").val("");
-      
-                      // 최신 메시지로 스크롤 이동
-                      scrollToBottom();
                   }
               },
           });
       }
       
+
 
         //카드 삭제
         function deletePost(postId) {
