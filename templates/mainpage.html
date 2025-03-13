@@ -11,6 +11,15 @@
       href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
     />
     <style>
+      @font-face {
+        font-family: 'BMHANNAPro';
+        src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_seven@1.0/BMHANNAPro.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+        }
+      * {
+        font-family: 'BMHANNAPro', sans-serif;
+      }   
       .container {
         width: 90%;
         margin: auto;
@@ -279,7 +288,6 @@
               </button>
             </div>
           </div>
-          <script src="script.js"></script>
         </div>
         <div class="sidebar">
           <div class="card">
@@ -320,7 +328,13 @@
           socket.on("message", function (data) {
             var userName = "{{ nickname | safe }}";
             var contentSpan = $("#chat-box");
-            var content = $("<div></div>").text(data.user + " : " + data.message);
+            if(data.user == userName){
+              console.log("너가올린 채팅이여")
+              var content = $('<div style="color: green;"></div>').text(data.user + " : " + data.message);
+            }
+            else{
+              var content = $("<div></div>").text(data.user + " : " + data.message);
+            }
             contentSpan.append(content);
           });
 
