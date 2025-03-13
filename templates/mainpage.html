@@ -487,6 +487,33 @@
       });
       });
       ///////주문 상태 변경//////
+
+      
+      $(document).ready(function(){
+        const currentTime = new Date();
+        for (const card of {{ cards | tojson }}){
+          const [endHours, endMinutes] = card['end_time'].split(':').map(Number);
+          console.log("시" + endHours);
+          console.log("분" + endMinutes);
+          const endDate = new Date(currentTime);
+          endDate.setHours(endHours, endMinutes,0,0);
+          if(currentTime > endDate){
+            let get_id = card['_id'];
+            
+            $.ajax({
+              type : "POST",
+              url : "/updateoutdate",
+              data : {give_id : get_id},
+              success : function(response){
+                if(response["result"] == "success"){
+                  console.log("상태변경완료")
+                  location.reload();
+                }
+              }
+            })
+          }
+        }
+      })
     </script>
   </body>
 </html>
