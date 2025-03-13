@@ -336,6 +336,9 @@
               var content = $("<div></div>").text(data.user + " : " + data.message);
             }
             contentSpan.append(content);
+
+            // 최신 메시지로 스크롤 이동
+            scrollToBottom(); 
           });
 
           $("#messageForm").submit(function (event) {
@@ -389,19 +392,33 @@
 
         function PostChat() {
           let get_texts = $("#chat-message").val();
-          let get_nickname = {{ nickname  | safe | tojson}};
-
+          let get_nickname = {{ nickname  | safe | tojson }};
+      
           $.ajax({
-            type: "POST",
-            url: "/postchat",
-            data: { give_nickname: get_nickname, give_texts: get_texts },
-            success: function (response) {
-              if (response["result"] == "success") {
-                console.log("DB에 채팅 저장");
-              }
-            },
+              type: "POST",
+              url: "/postchat",
+              data: { give_nickname: get_nickname, give_texts: get_texts },
+              success: function (response) {
+                  if (response["result"] == "success") {
+                      console.log("DB에 채팅 저장");
+      
+                      // 채팅창에 메시지 추가
+                      let chatBox = document.getElementById("chat-box");
+                      let newMessage = document.createElement("div");
+                      newMessage.textContent = get_nickname + " : " + get_texts;
+                      newMessage.style.color = "green";  // 본인이 보낸 메시지는 초록색
+                      chatBox.appendChild(newMessage);
+      
+                      // 입력창 초기화
+                      $("#chat-message").val("");
+      
+                      // 최신 메시지로 스크롤 이동
+                      scrollToBottom();
+                  }
+              },
           });
-        }
+      }
+      
 
         //카드 삭제
         function deletePost(postId) {
@@ -528,6 +545,15 @@
           }
         }
       })
+
+      function scrollToBottom() {
+        let chatBox = document.getElementById("chat-box");
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    window.onload = function () {
+      scrollToBottom();  // 페이지 로드 시 가장 아래로 이동
+  };
     </script>
   </body>
 </html>
