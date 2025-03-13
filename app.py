@@ -304,7 +304,7 @@ def postChat():
     else:
         return jsonify({'result' : 'failure'})
 
-
+#상태 변경 관련
 @app.route("/update_order_status", methods=["POST"])
 def updateOrderStatus():
     data = request.json
@@ -314,6 +314,16 @@ def updateOrderStatus():
     print(new_status)
 
     result = db.cards.update_one({'_id' : id}, {'$set': {'status': new_status}})
+    if result.modified_count == 1:
+        return jsonify({'result': 'success'})
+    else:
+        return jsonify({'result': 'failure'})
+
+@app.route("/updateoutdate", methods=["POST"])
+def updateOutdate():
+    id = request.form.get('give_id')
+    id = ObjectId(id)
+    result = db.cards.update_one({'_id' : id}, {'$set': {'status': 'after_order'}})
     if result.modified_count == 1:
         return jsonify({'result': 'success'})
     else:
