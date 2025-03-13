@@ -238,7 +238,7 @@ def modify_card():
     post_id = request.args.get('post_id')
     post = db.cards.find_one({'_id': ObjectId(post_id)})  # MongoDB 사용 시
     return render_template('edit_post.html', post=post)
-    
+   
 
 #수정 내용 카드 업데이트 
 @app.route('/postcard/update/<post_id>', methods=['POST'])
