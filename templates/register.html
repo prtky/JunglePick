@@ -1,185 +1,211 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-    <head>
+  <head>
+    <!-- Webpage Title -->
+    <title>JungleRegister</title>
 
-        <!-- Webpage Title -->
-        <title>JungleRegister</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
 
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bulma CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css"
+    />
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
-        <!-- Bulma CSS -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
-        <!-- JS -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <!-- style -->
+    <style>
+      @font-face {
+        font-family: "BMHANNAPro";
+        src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_seven@1.0/BMHANNAPro.woff")
+          format("woff");
+        font-weight: normal;
+        font-style: normal;
+      }
+      * {
+        font-family: "BMHANNAPro", sans-serif;
+      }
+      html,
+      body {
+        height: 100%; /* 전체 높이를 화면 크기에 맞게 설정 */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
+      .register-container {
+        width: 320px;
+        margin: auto;
+        text-align: center;
+      }
 
-        <!-- style -->
-        <style>
-            html, body {
-                height: 100%; /* 전체 높이를 화면 크기에 맞게 설정 */
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
+      .label {
+        text-align: left;
+      }
+    </style>
 
-            .register-container {
-                width: 320px;
-                margin: auto;
-                text-align: center;
-            }
-            
-            .label {
-                text-align: left;
-            }
+    <script>
+      //이름부분 정규식 검사
+      function validateNameFormat(name) {
+        // 정규 표현식: "이름(정글8기-숫자)" 패턴 검사
+        let regex = /^[가-힣]{2,5}\(정글[0-9]+기-[0-9]+\)$/;
 
-        </style>
+        return regex.test(name);
+      }
 
+      // 아이디 유효성 검사 (5~10자의 알파벳 또는 숫자)
+      function validateIdFormat(id) {
+        let regex = /^[a-zA-Z0-9]{5,10}$/;
+        return regex.test(id);
+      }
 
-        <script>
+      // 비밀번호 유효성 검사 (8~16자의 알파벳 + 숫자 + 기호 조합)
+      function validatePasswordFormat(password) {
+        let regex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_]).{8,16}$/;
+        return regex.test(password);
+      }
 
-            //이름부분 정규식 검사
-            function validateNameFormat(name) {
-                // 정규 표현식: "이름(정글8기-숫자)" 패턴 검사
-                let regex = /^[가-힣]{2,5}\(정글[0-9]+기-[0-9]+\)$/;
-            
-                return regex.test(name);
-            }
-
-            // 아이디 유효성 검사 (5~10자의 알파벳 또는 숫자)
-            function validateIdFormat(id) {
-                let regex = /^[a-zA-Z0-9]{5,10}$/;
-                return regex.test(id);
-            }
-
-            // 비밀번호 유효성 검사 (8~16자의 알파벳 + 숫자 + 기호 조합)
-            function validatePasswordFormat(password) {
-                let regex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_]).{8,16}$/;
-                return regex.test(password);
-            }
-            
-            
-
-
-            // 간단한 회원가입 함수입니다.
-            // 아이디, 비밀번호, 닉네임을 받아 DB에 저장합니다.
-            function register() {
-
-           // 비밀번호와 재확인 비밀번호가 일치하는지 검사
-        if ($('#userpw').val() !== $('#userrepw').val()) {
-            alert("입력한 비밀번호가 서로 다릅니다. 다시 확인해주세요.");
-            return; // 서버 요청을 보내지 않음
+      // 간단한 회원가입 함수입니다.
+      // 아이디, 비밀번호, 닉네임을 받아 DB에 저장합니다.
+      function register() {
+        // 비밀번호와 재확인 비밀번호가 일치하는지 검사
+        if ($("#userpw").val() !== $("#userrepw").val()) {
+          alert("입력한 비밀번호가 서로 다릅니다. 다시 확인해주세요.");
+          return; // 서버 요청을 보내지 않음
         }
 
-            // 닉네임 형식 검사 (이름(정글8기-숫자))
-        if (!validateNameFormat($('#nickname').val())) {
-            alert("이름 형식이 올바르지 않습니다.\n예시: 슬랙과 동일한 홍길동(정글8기-3)로 해주세요.");
-            return;
-            }
+        // 닉네임 형식 검사 (이름(정글8기-숫자))
+        if (!validateNameFormat($("#nickname").val())) {
+          alert(
+            "이름 형식이 올바르지 않습니다.\n예시: 슬랙과 동일한 홍길동(정글8기-3)로 해주세요."
+          );
+          return;
+        }
 
-            // 1️⃣ 아이디 형식 검사
-        if (!validateIdFormat($('#userid').val())) {
-            alert("아이디는 5~10자의 알파벳 또는 숫자로만 조합해주세요.");
-            return;
+        // 1️⃣ 아이디 형식 검사
+        if (!validateIdFormat($("#userid").val())) {
+          alert("아이디는 5~10자의 알파벳 또는 숫자로만 조합해주세요.");
+          return;
         }
 
         // 2️⃣ 비밀번호 형식 검사
-        if (!validatePasswordFormat($('#userpw').val())) {
-            alert("비밀번호는 8~16자의 알파벳, 숫자, 기호 조합으로 해주세요.");
-            return;
+        if (!validatePasswordFormat($("#userpw").val())) {
+          alert("비밀번호는 8~16자의 알파벳, 숫자, 기호 조합으로 해주세요.");
+          return;
         }
-        
 
-                $.ajax({
-                    type: "POST",
-                    url: "/api/register",
-                    data: {
-                        id_give: $('#userid').val(),
-                        pw_give: $('#userpw').val(),
-                        nickname_give: $('#nickname').val()
-                    },
-                    success: function (response) {
-                        if (response['result'] == 'success') {
-                            alert('회원가입이 완료되었습니다.')
-                            window.location.href = '/login'
-                        } else {
-                            alert(response['msg'])
-                        }
-                    }
-                });
+        $.ajax({
+          type: "POST",
+          url: "/api/register",
+          data: {
+            id_give: $("#userid").val(),
+            pw_give: $("#userpw").val(),
+            nickname_give: $("#nickname").val(),
+          },
+          success: function (response) {
+            if (response["result"] == "success") {
+              alert("회원가입이 완료되었습니다.");
+              window.location.href = "/login";
+            } else {
+              alert(response["msg"]);
             }
-        
+          },
+        });
+      }
 
-            $(document).ready(function () {
-                $("#userid, #userpw, #userrepw, #usernick").keydown(function (event) {
-                    if (event.key === "Enter") {
-                        register();
-                    }
-                });
-            });
-
-        </script>
-
-    </head>
-    <body>
-        <div class="register-container">
-            <h1 class="title is-4">정글 PICK 회원가입 하기</h1>
-            <div class="box">
-                <div class="field">
-                    <div class="field-label is-normal">
-                        <label class="label" for="nickname">이름</label>
-                    </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <div class="control">
-                                <input type="text" class="input" id="nickname" placeholder="예시:홍길동(정글8기-1)">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="field">
-                    <div class="field-label is-normal">
-                        <label class="label" for="userid">ID</label>
-                    </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <div class="control">
-                                <input type="text" class="input" id="userid" aria-describedby="emailHelp"
-                                       placeholder="내 아이디">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="field">
-                    <div class="field-label is-normal">
-                        <label class="label" for="userpw">Password</label>
-                    </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <div class="control">
-                                <input type="password" class="input" id="userpw" placeholder="비밀번호"> 
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="field">
-                    <div class="field-label is-normal">
-                        <label class="label" for="userrepw">비밀번호 확인</label>
-                    </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <div class="control">
-                                <input type="password" class="input" id="userrepw" placeholder="비밀번호 재확인">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <button class="button is-primary" onclick="register()">회원가입</button>
+      $(document).ready(function () {
+        $("#userid, #userpw, #userrepw, #usernick").keydown(function (event) {
+          if (event.key === "Enter") {
+            register();
+          }
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div class="register-container">
+      <h1 class="title is-4">정글 PICK 회원가입 하기</h1>
+      <div class="box">
+        <div class="field">
+          <div class="field-label is-normal">
+            <label class="label" for="nickname">이름</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <input
+                  type="text"
+                  class="input"
+                  id="nickname"
+                  placeholder="예시:홍길동(정글8기-1)"
+                />
+              </div>
             </div>
+          </div>
         </div>
-    </body>
+
+        <div class="field">
+          <div class="field-label is-normal">
+            <label class="label" for="userid">ID</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <input
+                  type="text"
+                  class="input"
+                  id="userid"
+                  aria-describedby="emailHelp"
+                  placeholder="내 아이디"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-label is-normal">
+            <label class="label" for="userpw">Password</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <input
+                  type="password"
+                  class="input"
+                  id="userpw"
+                  placeholder="비밀번호"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label is-normal">
+            <label class="label" for="userrepw">비밀번호 확인</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <input
+                  type="password"
+                  class="input"
+                  id="userrepw"
+                  placeholder="비밀번호 재확인"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="button is-primary" onclick="register()">회원가입</button>
+      </div>
+    </div>
+  </body>
 </html>
