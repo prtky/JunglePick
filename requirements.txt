@@ -1,0 +1,7 @@
+flask
+pymongo
+certifi
+PyJWT
+flask_jwt_extended
+bcrypt
+falsk_socketio
